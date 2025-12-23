@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API de Ativos - Documentação | Eletromidia</title>
+    <meta name="description"
+        content="Documentação da API de Ativos Eletromidia. Consulte equipamentos, abrigos e pontos de mídia.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #FF4F00;
+            --black: #000000;
+            --white: #FFFFFF;
+            --cream: #F9F2E7;
+            --purple: #4E18FF;
+            --yellow: #FECC14;
+            --green: #3D7700;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-600: #666;
+            --radius: 12px;
+            --radius-lg: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Rethink Sans', system-ui, sans-serif;
+            background: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: var(--orange);
+            padding: 16px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .header .badge {
+            background: var(--black);
+            color: var(--white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--cream);
+            padding: 24px;
+            position: sticky;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .sidebar h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--gray-600);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px 16px;
+            color: var(--black);
+            text-decoration: none;
+            border-radius: var(--radius);
+            margin-bottom: 4px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: var(--orange);
+            color: var(--black);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 48px 64px;
+            max-width: 900px;
+        }
+
+        section {
+            margin-bottom: 64px;
+            scroll-margin-top: 80px;
+        }
+
+        h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--orange);
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 32px 0 16px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .card.highlight {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%);
+            border-left: 4px solid var(--orange);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        th {
+            background: var(--black);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        tr:hover td {
+            background: var(--cream);
+        }
+
+        /* Code Tabs */
+        .code-tabs {
+            margin: 24px 0;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: var(--black);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: var(--gray-200);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--white);
+        }
+
+        .tab-btn.active {
+            background: var(--purple);
+            color: var(--white);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Code blocks */
+        pre {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            font-size: 13px !important;
+        }
+
+        pre code {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: #1a1a2e;
+            border-bottom: 1px solid #333;
+        }
+
+        .code-lang {
+            color: var(--yellow);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: var(--purple);
+            color: var(--white);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.8;
+        }
+
+        .copy-btn.copied {
+            background: var(--green);
+        }
+
+        /* Inline code */
+        code:not([class*="language-"]) {
+            background: var(--cream);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: var(--purple);
+        }
+
+        /* URL Box */
+        .url-box {
+            background: var(--black);
+            color: var(--white);
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin: 16px 0;
+        }
+
+        /* Alert boxes */
+        .alert {
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            margin: 16px 0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .alert-info {
+            background: #e8f4fd;
+            border-left: 4px solid var(--purple);
+        }
+
+        .alert-warning {
+            background: #fff8e6;
+            border-left: 4px solid var(--yellow);
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            border-left: 4px solid var(--green);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--gray-200);
+            }
+
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .main {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>📡 API de Ativos</h1>
+        <span class="badge">v5.2.0 Multi-Layer</span>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar">
+            <h3>Navegação</h3>
+            <ul>
+                <li><a href="#visao-geral">Visão Geral</a></li>
+                <li><a href="#camadas">Camadas de Dados</a></li>
+                <li><a href="#inicio-rapido">Início Rápido</a></li>
+                <li><a href="#parametros">Parâmetros</a></li>
+                <li><a href="#exemplos">Exemplos de Código</a></li>
+                <li><a href="#download">Download Completo</a></li>
+                <li><a href="#erros">Tratamento de Erros</a></li>
+                <li><a href="#rate-limit">Rate Limiting</a></li>
+                <li><a href="#campos">Campos Disponíveis</a></li>
+            </ul>
+        </nav>
+
+        <main class="main">
+            <!-- Visão Geral -->
+            <section id="visao-geral">
+                <h2>Visão Geral</h2>
+                <p>API REST de alta performance para consulta de dados de equipamentos e ativos. Base com
+                    <strong>22.000+ registros</strong> de abrigos, pontos de mídia e equipamentos urbanos.</p>
+
+                <div class="card highlight">
+                    <h4>✨ Recursos v5.2</h4>
+                    <ul style="margin-left: 20px; margin-top: 12px;">
+                        <li><strong>Camadas de dados</strong> - Main, Panels, Abrigo Amigo, Full, Summary</li>
+                        <li><strong>Abrigo Amigo</strong> - Iniciativa de segurança para mulheres (8PM-5AM)</li>
+                        <li><strong>Dados de painéis</strong> - Contagem precisa de painéis digitais e estáticos</li>
+                        <li><strong>Meta introspection</strong> - <code>?meta=layers</code> para descoberta da API</li>
+                        <li><strong>Filtros de painéis</strong> - hasDigital, hasStatic, modelo</li>
+                        <li><strong>Filtros Abrigo Amigo</strong> - abrigoAmigo, cliente</li>
+                        <li><strong>Cache inteligente</strong> - Respostas 10x mais rápidas</li>
+                        <li><strong>Busca geoespacial</strong> - Raio em km por coordenadas</li>
+                    </ul>
+                </div>
+
+                <h3>URL Base</h3>
+                <div class="url-box">
+                    https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec
+                </div>
+            </section>
+
+            <!-- Camadas de Dados (NEW) -->
+            <section id="camadas">
+                <h2>Camadas de Dados</h2>
+                <p>A API v5.2 suporta múltiplas camadas de dados que podem ser consultadas individualmente ou mescladas.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Camada</th>
+                            <th>Descrição</th>
+                            <th>Uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>main</code></td>
+                            <td>Dados principais de equipamentos (padrão)</td>
+                            <td><code>?layer=main</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>panels</code></td>
+                            <td>Apenas dados de painéis</td>
+                            <td><code>?layer=panels</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>abrigoamigo</code></td>
+                            <td>Equipamentos com tecnologia Abrigo Amigo</td>
+                            <td><code>?layer=abrigoamigo</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>full</code></td>
+                            <td>Main + Panels + Abrigo Amigo mesclados</td>
+                            <td><code>?layer=full</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>summary</code></td>
+                            <td>Main + contagens de painéis + flags Abrigo Amigo</td>
+                            <td><code>?layer=summary</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Introspection</h3>
+                <p>Use o parâmetro <code>meta</code> para descobrir a estrutura da API:</p>
+                <div class="code-tabs">
+                    <div class="tab-content active">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-bash"># Listar camadas disponíveis
+curl "BASE_URL?meta=layers"
+
+# Ver versão da API
+curl "BASE_URL?meta=version"
+
+# Ver schema completo
+curl "BASE_URL?meta=schema"</code></pre>
+                    </div>
+                </div>
+
+                <h3>Exemplo de Resposta (layer=full)</h3>
+                <div class="code-tabs">
+                    <div class="tab-content active">
+                        <div class="code-header"><span class="code-lang">json</span></div>
+                        <pre><code class="language-json">{
+  "status": "success",
+  "meta": { "apiVersion": "5.0.0", "layer": "full" },
+  "data": [{
+    "Nº Eletro": "A01516",
+    "Status": "Ativo",
+    "panels": {
+      "digital": { "boxes": 1, "faces": 1, "position": "90°", "type": "SIMPLES" },
+      "static": { "boxes": 2, "faces": 2, "position": "180°", "type": "SUSPENSO" },
+      "shelterModel": "CAOS LEVE",
+      "hasDigital": true,
+      "hasStatic": true,
+      "totalPanels": 3
+    }
+  }]
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Início Rápido -->
+            <section id="inicio-rapido">
+                <h2>Início Rápido</h2>
+                <p>Faça sua primeira requisição em segundos:</p>
+
+                <div class="code-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="curl">cURL</button>
+                        <button class="tab-btn" data-tab="js">JavaScript</button>
+                        <button class="tab-btn" data-tab="python">Python</button>
+                    </div>
+                    <div class="tab-content active" id="curl">
+                        <div class="code-header">
+                            <span class="code-lang">bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-bash"># Buscar primeiros 1000 registros
+curl "https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec"
+
+# Buscar com filtro de cidade
+curl "https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec?cidade=SÃO%20PAULO&status=Ativo"</code></pre>
+                    </div>
+                    <div class="tab-content" id="js">
+                        <div class="code-header">
+                            <span class="code-lang">javascript</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-javascript">const API_URL = 'https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec';
+
+// Busca simples
+const response = await fetch(API_URL);
+const data = await response.json();
+console.log(`Total: ${data.total} registros`);
+
+// Com filtros
+const filtered = await fetch(`${API_URL}?status=Ativo&cidade=SÃO PAULO`);
+const result = await filtered.json();
+console.log(result.data);</code></pre>
+                    </div>
+                    <div class="tab-content" id="python">
+                        <div class="code-header">
+                            <span class="code-lang">python</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-python">import requests
+
+API_URL = 'https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec'
+
+# Busca simples
+response = requests.get(API_URL)
+data = response.json()
+print(f"Total: {data['total']} registros")
+
+# Com filtros
+params = {'status': 'Ativo', 'cidade': 'SÃO PAULO'}
+result = requests.get(API_URL, params=params).json()
+print(result['data'])</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Parâmetros -->
+            <section id="parametros">
+                <h2>Parâmetros</h2>
+
+                <h3>Paginação</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parâmetro</th>
+                            <th>Tipo</th>
+                            <th>Padrão</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>start</code></td>
+                            <td>int</td>
+                            <td>0</td>
+                            <td>Offset inicial</td>
+                        </tr>
+                        <tr>
+                            <td><code>limit</code></td>
+                            <td>int</td>
+                            <td>1000</td>
+                            <td>Registros por página (máx: 5000)</td>
+                        </tr>
+                        <tr>
+                            <td><code>after</code></td>
+                            <td>string</td>
+                            <td>-</td>
+                            <td>Cursor (Nº Eletro) para paginação sequencial</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Filtros</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parâmetro</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>q</code></td>
+                            <td>string</td>
+                            <td>Busca textual em todos os campos</td>
+                        </tr>
+                        <tr>
+                            <td><code>status</code></td>
+                            <td>string</td>
+                            <td>Filtrar por Status (ex: "Ativo")</td>
+                        </tr>
+                        <tr>
+                            <td><code>cidade</code></td>
+                            <td>string</td>
+                            <td>Filtrar por cidade</td>
+                        </tr>
+                        <tr>
+                            <td><code>estado</code></td>
+                            <td>string</td>
+                            <td>Filtrar por estado (ex: "SP")</td>
+                        </tr>
+                        <tr>
+                            <td><code>bairro</code></td>
+                            <td>string</td>
+                            <td>Filtrar por bairro</td>
+                        </tr>
+                        <tr>
+                            <td><code>area</code></td>
+                            <td>string</td>
+                            <td>Filtrar por área de trabalho</td>
+                        </tr>
+                        <tr>
+                            <td><code>praca</code></td>
+                            <td>string</td>
+                            <td>Filtrar por praça</td>
+                        </tr>
+                        <tr>
+                            <td><code>filial</code></td>
+                            <td>string</td>
+                            <td>Filtrar por filial</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Geoespacial</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parâmetro</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>lat</code></td>
+                            <td>float</td>
+                            <td>Latitude central da busca</td>
+                        </tr>
+                        <tr>
+                            <td><code>lon</code></td>
+                            <td>float</td>
+                            <td>Longitude central da busca</td>
+                        </tr>
+                        <tr>
+                            <td><code>radius</code></td>
+                            <td>float</td>
+                            <td>Raio em km (padrão: 5)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Seleção de Campos</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parâmetro</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>fields</code></td>
+                            <td>string</td>
+                            <td>Campos separados por vírgula</td>
+                        </tr>
+                        <tr>
+                            <td><code>nocache</code></td>
+                            <td>bool</td>
+                            <td>Ignorar cache (true/false)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Camadas e Filtros de Painéis</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parâmetro</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>layer</code></td>
+                            <td>string</td>
+                            <td>Camada de dados: main, panels, full, summary (padrão: main)</td>
+                        </tr>
+                        <tr>
+                            <td><code>hasDigital</code></td>
+                            <td>bool</td>
+                            <td>Filtrar abrigos com painéis digitais (layer: panels, full, summary)</td>
+                        </tr>
+                        <tr>
+                            <td><code>hasStatic</code></td>
+                            <td>bool</td>
+                            <td>Filtrar abrigos com painéis estáticos</td>
+                        </tr>
+                        <tr>
+                            <td><code>modelo</code></td>
+                            <td>string</td>
+                            <td>Filtrar por modelo de abrigo (ex: "CAOS LEVE")</td>
+                        </tr>
+                        <tr>
+                            <td><code>meta</code></td>
+                            <td>string</td>
+                            <td>Introspection: layers, version, schema</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Exemplos -->
+            <section id="exemplos">
+                <h2>Exemplos de Código</h2>
+
+                <h3>TypeScript</h3>
+                <div class="code-tabs">
+                    <div class="tab-content active">
+                        <div class="code-header">
+                            <span class="code-lang">typescript</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-typescript">interface ApiResponse {
+  status: 'success' | 'error';
+  meta: { count: number; total: number; cached: boolean };
+  data: Equipment[];
+}
+
+interface Equipment {
+  'Nº Eletro': string;
+  'Status': string;
+  'Latitude': number;
+  'Longitude': number;
+}
+
+async function fetchEquipments(params?: Record<string, string>): Promise<ApiResponse> {
+  const url = new URL('https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec');
+  if (params) Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  
+  const response = await fetch(url.toString());
+  return response.json();
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Apps Script</h3>
+                <div class="code-tabs">
+                    <div class="tab-content active">
+                        <div class="code-header">
+                            <span class="code-lang">javascript</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-javascript">function buscarAtivos() {
+  const url = 'https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec';
+  
+  const response = UrlFetchApp.fetch(url + '?status=Ativo&limit=100');
+  const data = JSON.parse(response.getContentText());
+  
+  Logger.log('Total de ativos: ' + data.total);
+  return data.data;
+}
+
+function importarParaPlanilha() {
+  const ativos = buscarAtivos();
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  // Cabeçalhos
+  const headers = Object.keys(ativos[0]);
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  
+  // Dados
+  const rows = ativos.map(item => headers.map(h => item[h]));
+  sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Go</h3>
+                <div class="code-tabs">
+                    <div class="tab-content active">
+                        <div class="code-header">
+                            <span class="code-lang">go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-go">package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type ApiResponse struct {
+    Status string                   `json:"status"`
+    Total  int                      `json:"total"`
+    Data   []map[string]interface{} `json:"data"`
+}
+
+func fetchEquipments() (*ApiResponse, error) {
+    url := "https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec"
+    
+    resp, err := http.Get(url)
+    if err != nil { return nil, err }
+    defer resp.Body.Close()
+    
+    var result ApiResponse
+    json.NewDecoder(resp.Body).Decode(&result)
+    return &result, nil
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Completo -->
+            <section id="download">
+                <h2>Download Completo</h2>
+                <p>Para baixar todos os 22.000+ registros, use paginação em chunks:</p>
+
+                <div class="code-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="dl-js">JavaScript</button>
+                        <button class="tab-btn" data-tab="dl-py">Python</button>
+                    </div>
+                    <div class="tab-content active" id="dl-js">
+                        <div class="code-header">
+                            <span class="code-lang">javascript</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-javascript">async function downloadTodosAtivos() {
+  const API_URL = 'https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec';
+  const LIMIT = 5000;
+  
+  let allData = [];
+  let start = 0;
+  let total = Infinity;
+  
+  while (start < total) {
+    console.log(`Baixando ${start}...`);
+    const response = await fetch(`${API_URL}?start=${start}&limit=${LIMIT}`);
+    const result = await response.json();
+    
+    allData = allData.concat(result.data);
+    total = result.total;
+    start += LIMIT;
+  }
+  
+  console.log(`✅ Download completo: ${allData.length} registros`);
+  return allData;
+}</code></pre>
+                    </div>
+                    <div class="tab-content" id="dl-py">
+                        <div class="code-header">
+                            <span class="code-lang">python</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <pre><code class="language-python">import requests
+
+def download_todos_ativos():
+    API_URL = 'https://script.google.com/macros/s/AKfycbzXpzgaA64P147rIqeaLEkCZ4YQcz5rJOn89Ag8Pf3p8EIg0Beisa9dS0OL-UEOsIWL/exec'
+    LIMIT = 5000
+    
+    all_data = []
+    start = 0
+    total = float('inf')
+    
+    while start < total:
+        print(f'Baixando {start}...')
+        response = requests.get(API_URL, params={'start': start, 'limit': LIMIT})
+        result = response.json()
+        
+        all_data.extend(result['data'])
+        total = result['total']
+        start += LIMIT
+    
+    print(f'✅ Download completo: {len(all_data)} registros')
+    return all_data</code></pre>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <span>💡</span>
+                    <span>Use <code>fields</code> para reduzir o tamanho do payload se não precisar de todos os
+                        campos.</span>
+                </div>
+            </section>
+
+            <!-- Erros -->
+            <section id="erros">
+                <h2>Tratamento de Erros</h2>
+
+                <h3>Resposta de Sucesso</h3>
+                <div class="code-tabs">
+                    <div class="tab-content active">
+                        <div class="code-header"><span class="code-lang">json</span></div>
+                        <pre><code class="language-json">{
+  "status": "success",
+  "meta": {
+    "count": 1000,
+    "total": 22038,
+    "cached": true,
+    "executionTimeMs": 234
+  },
+  "data": [...]
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Erro de Rate Limit (429)</h3>
+                <div class="code-tabs">
+                    <div class="tab-content active">
+                        <div class="code-header"><span class="code-lang">json</span></div>
+                        <pre><code class="language-json">{
+  "status": "error",
+  "code": 429,
+  "message": "Too many requests. Please retry after 60 seconds.",
+  "meta": { "retryAfter": 60 }
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Erro Genérico</h3>
+                <div class="code-tabs">
+                    <div class="tab-content active">
+                        <div class="code-header"><span class="code-lang">json</span></div>
+                        <pre><code class="language-json">{
+  "status": "error",
+  "message": "Descrição do erro"
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rate Limit -->
+            <section id="rate-limit">
+                <h2>Rate Limiting</h2>
+                <div class="card">
+                    <p><strong>Limite:</strong> 100 requisições por minuto</p>
+                    <p><strong>Resposta:</strong> HTTP 429 com campo <code>retryAfter</code></p>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span>⚠️</span>
+                    <span>Implemente backoff exponencial para evitar bloqueios.</span>
+                </div>
+            </section>
+
+            <!-- Campos -->
+            <section id="campos">
+                <h2>Campos Disponíveis</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Tipo</th>
+                            <th>Exemplo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Nº Eletro</code></td>
+                            <td>string</td>
+                            <td>"A08802"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Nº Parada</code></td>
+                            <td>number</td>
+                            <td>480014794</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ponto</code></td>
+                            <td>string</td>
+                            <td>"ABRIGOS CSP"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Área de Trabalho</code></td>
+                            <td>string</td>
+                            <td>"Zona Oeste - SP"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Endereço</code></td>
+                            <td>string</td>
+                            <td>"PRAÇA DOUTOR..."</td>
+                        </tr>
+                        <tr>
+                            <td><code>Bairro</code></td>
+                            <td>string</td>
+                            <td>"LAPA"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Cidade</code></td>
+                            <td>string</td>
+                            <td>"SÃO PAULO"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Estado</code></td>
+                            <td>string</td>
+                            <td>"SP"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Latitude</code></td>
+                            <td>number</td>
+                            <td>-23.537233</td>
+                        </tr>
+                        <tr>
+                            <td><code>Longitude</code></td>
+                            <td>number</td>
+                            <td>-46.707552</td>
+                        </tr>
+                        <tr>
+                            <td><code>Status</code></td>
+                            <td>string</td>
+                            <td>"Ativo"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Data Cadastro</code></td>
+                            <td>string</td>
+                            <td>"29/08/2025"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Filial</code></td>
+                            <td>string</td>
+                            <td>"Matriz"</td>
+                        </tr>
+                        <tr>
+                            <td><code>Link Operações</code></td>
+                            <td>string</td>
+                            <td>URL</td>
+                        </tr>
+                        <tr>
+                            <td><code>Foto Referência</code></td>
+                            <td>string</td>
+                            <td>URL</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <footer
+                style="margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--gray-200); color: var(--gray-600); font-size: 14px;">
+                <p>© 2025 Eletromidia - API de Ativos v5.0.0</p>
+                <p style="margin-top: 8px;">Documentação também disponível via API: <code>?docs=true</code> | Introspection: <code>?meta=layers</code></p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabGroup = btn.closest('.code-tabs');
+                tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                tabGroup.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                tabGroup.querySelector(`#${btn.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        // Copy to clipboard
+        function copyCode(btn) {
+            const code = btn.closest('.tab-content, .code-tabs').querySelector('code').textContent;
+            navigator.clipboard.writeText(code);
+            btn.textContent = 'Copiado!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+        }
+
+        // Active sidebar link
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.sidebar a');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                if (window.scrollY >= section.offsetTop - 100) current = section.id;
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

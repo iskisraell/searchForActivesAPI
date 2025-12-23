@@ -1,0 +1,59 @@
+{
+  "status": "success",
+  "meta": {
+    "apiVersion": "5.2.0",
+    "layer": "main",
+    "count": 1,
+    "total": 1,
+    "cached": false,
+    "cacheExpires": "2025-12-23T15:15:38.723Z",
+    "executionTimeMs": 1334
+  },
+  "links": {
+    "self": "?start=0&limit=5",
+    "first": "?start=0&limit=5",
+    "last": "?start=0&limit=5"
+  },
+  "count": 1,
+  "total": 1,
+  "data": [
+    {
+      "Nº Eletro": "A08802",
+      "Nº Parada": 480014794,
+      "Identificador do Local": "",
+      "Ponto": "ABRIGOS CSP",
+      "Área de Trabalho": "Zona Oeste - SP",
+      "Endereço": "PRAÇA DOUTOR CIPRIANO DE MORAES, SN",
+      "Bairro": "LAPA",
+      "Cidade": "SÃO PAULO",
+      "Estado": "SP",
+      "Praça": "SP",
+      "Tipo de Equipamento": "",
+      "Tipo de Estabelecimento": "Abrigos São Paulo - Abrigos [Sem Publicidade] [383]",
+      "Latitude": -23.537233,
+      "Longitude": -46.707552,
+      "Status": "Ativo",
+      "Data Cadastro": "29/08/2025 19:18:12",
+      "Filial": "Matriz",
+      "Área de Risco": "-",
+      "Modelo de Abrigo": "-",
+      "Tipo de Adesivo": "-",
+      "Tipo de Piso": "-",
+      "Energizado": "-",
+      "Luminária": "-",
+      "Abrigo Amigo": "-",
+      "Wi-Fi": "-",
+      "Câmera": "-",
+      "Altura do Totem": "-",
+      "Painel Digital": "-",
+      "Painel Digital - Tipo": "-",
+      "Painel Digital - Posição": "-",
+      "Painel Estático": "-",
+      "Painel Estático - Tipo": "-",
+      "Painel Estático - Posição": "-",
+      "Link Operações": "https://operacoes.eletromidia.com.br/places/64720",
+      "Foto Referência": "",
+      "Observações": ""
+    }
+  ]
+}
