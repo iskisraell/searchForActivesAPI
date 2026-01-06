@@ -1,8 +1,8 @@
 # AGENTS.md - Project Context & Standards
 
 > **Project**: Search for Actives API  
-> **Version**: 5.2.0 (Multi-Layer Architecture with Abrigo Amigo)  
-> **Last Updated**: 2025-12-23  
+> **Version**: 5.4.0 (Security + Operational Dashboard)  
+> **Last Updated**: 2026-01-06  
 > **Platform**: Google Apps Script
 
 ---
@@ -32,6 +32,8 @@ REST API for querying equipment and asset data from Eletromidia's operational da
 - **Flexible querying**: Text search, filters, geospatial queries
 - **Self-documenting**: Built-in HTML documentation, meta introspection
 - **Abrigo Amigo integration**: Women's safety initiative layer with 305 equipped bus stops
+- **API Key Authentication**: Secure access with HMAC-SHA256 request signing (v5.4.0)
+- **Operational Dashboard**: Maintenance, incident, and service level tracking (v5.3.0)
 
 ### Tech Stack
 

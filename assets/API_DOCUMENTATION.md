@@ -1,11 +1,19 @@
 # Equipment Assets API Documentation
 
-> **Version**: 5.2.0 (Multi-Layer Architecture)  
-> **Last Updated**: 2025-12-23
+> **Version**: 5.3.0 (Multi-Layer Architecture + Operational Dashboard)  
+> **Last Updated**: 2025-12-28
 
 ## Overview
 
 High-performance REST API for querying equipment/asset data from a database of 22,000+ records. Built with multi-layer data mesh, caching, multi-field filtering, and optimized for fast full-payload retrieval.
+
+### New in v5.3.0 - Operational Dashboard
+
+- **Maintenance Performance layer**: Weekly preventive maintenance tracking with bi-annual periods (1BI/2BI)
+- **Incident Intelligence layer**: Geographic and category analysis of issues with Top-N filtering
+- **Service Level layer**: SLA and resolution time tracking with backlog metrics
+- **New filters**: `semana`, `periodo`, `topN`, `ocorrencia`, `origem`, `statusTicket`, `codEletro`, `agregado`
+- **30-minute caching**: Operational data cached for 30 minutes (vs 5-10 minutes for asset data)
 
 ### New in v5.2
 
@@ -60,6 +68,29 @@ curl "BASE_URL?status=Ativo&cidade=SÃO PAULO"
 
 # Get only specific fields
 curl "BASE_URL?fields=Nº Eletro,Latitude,Longitude,Status"
+
+# --- Operational Dashboard Examples (NEW v5.3) ---
+
+# Get maintenance performance data
+curl "BASE_URL?layer=maintenance_performance"
+
+# Get aggregated maintenance data by filial/period
+curl "BASE_URL?layer=maintenance_performance&agregado=true"
+
+# Get 1º BI maintenance data only
+curl "BASE_URL?layer=maintenance_performance&periodo=1BI"
+
+# Get top 10 incident types
+curl "BASE_URL?layer=incident_intelligence&topN=10"
+
+# Get incidents for specific neighborhood
+curl "BASE_URL?layer=incident_intelligence&bairro=PINHEIROS"
+
+# Get pending service level tickets
+curl "BASE_URL?layer=service_level&statusTicket=PENDENTE"
+
+# Get service level data for specific asset (drill-down)
+curl "BASE_URL?layer=service_level&codEletro=A01516"
 ```
 
 ---
@@ -70,7 +101,7 @@ curl "BASE_URL?fields=Nº Eletro,Latitude,Longitude,Status"
 
 | Parameter | Type   | Default | Values                                   | Description         |
 | --------- | ------ | ------- | ---------------------------------------- | ------------------- |
-| `layer`   | string | main    | main, panels, abrigoamigo, full, summary | Data layer to query |
+| `layer`   | string | main    | main, panels, abrigoamigo, full, summary, maintenance_performance, incident_intelligence, service_level | Data layer to query |
 
 **Layer descriptions:**
 
@@ -79,6 +110,9 @@ curl "BASE_URL?fields=Nº Eletro,Latitude,Longitude,Status"
 - `abrigoamigo` - Abrigo Amigo equipped shelters only (NEW v5.2)
 - `full` - Main data merged with panels and Abrigo Amigo (nested objects)
 - `summary` - Main data with panel count fields and Abrigo Amigo flags added
+- `maintenance_performance` - Weekly maintenance tracking by branch (NEW v5.3)
+- `incident_intelligence` - Geographic/category analysis of issues (NEW v5.3)
+- `service_level` - SLA and service ticket tracking (NEW v5.3)
 
 ### Meta Introspection (NEW in v5.0)
 
@@ -126,6 +160,20 @@ curl "BASE_URL?fields=Nº Eletro,Latitude,Longitude,Status"
 | `cliente`     | string | Filter by sponsor (Claro, Governo)           | abrigoamigo, full, summary |
 
 **About Abrigo Amigo:** Award-winning social initiative by Eletromidia and AlmapBBDO designed to protect women at night. From 8:00 PM to 5:00 AM, digital advertising displays at bus stops transform into interactive safety hubs with cameras, microphones, and real-time video calls.
+
+### Operational Dashboard Filters (NEW in v5.3.0)
+
+| Parameter      | Type   | Description                                         | Layers                           |
+| -------------- | ------ | --------------------------------------------------- | -------------------------------- |
+| `filial`       | string | Filter by branch (FILIAL LESTE, FILIAL SUL, MATRIZ) | maintenance_performance, incident_intelligence, service_level |
+| `semana`       | string | Filter by week number (01, 02, etc.)                | maintenance_performance, service_level |
+| `periodo`      | string | Filter by bi-annual period (1BI or 2BI)             | maintenance_performance          |
+| `topN`         | int    | Return only top N occurrence types by count         | incident_intelligence            |
+| `ocorrencia`   | string | Filter by occurrence/issue type                     | incident_intelligence            |
+| `origem`       | string | Filter by source (SAC, COP, LIDIA)                  | service_level                    |
+| `statusTicket` | string | Filter by ticket status (CONCLUIDO, PENDENTE)       | service_level                    |
+| `codEletro`    | string | Filter by equipment code (for drill-down)           | service_level                    |
+| `agregado`     | bool   | Enable aggregation mode (grouped results)           | maintenance_performance          |
 
 ### Geospatial
 
@@ -269,6 +317,114 @@ curl "BASE_URL?fields=Nº Eletro,Latitude,Longitude,Status"
       "enabled": true,
       "cliente": "Claro",
       "paradaOriginal": "20014641"
+    }
+  ]
+}
+```
+
+### Maintenance Performance Response (layer=maintenance_performance) NEW v5.3
+
+```json
+{
+  "status": "success",
+  "meta": {
+    "apiVersion": "5.3.0",
+    "layer": "maintenance_performance",
+    "count": 54,
+    "total": 54
+  },
+  "data": [
+    {
+      "filial": "FILIAL LESTE",
+      "semana": "01º SEMANA",
+      "previsto": 848,
+      "concluido": 848,
+      "pendente": 0,
+      "semanaConcluido": 191,
+      "percentRealizados": 0.23,
+      "periodo": "1BI"
+    }
+  ]
+}
+```
+
+**Aggregated Mode** (`?layer=maintenance_performance&agregado=true`):
+
+```json
+{
+  "data": [
+    {
+      "filial": "FILIAL LESTE",
+      "periodo": "1BI",
+      "totalPrevisto": 7335,
+      "totalConcluido": 7312,
+      "totalPendente": 173,
+      "avgPercentRealizados": 0.91,
+      "semanaCount": 9
+    }
+  ]
+}
+```
+
+### Incident Intelligence Response (layer=incident_intelligence) NEW v5.3
+
+```json
+{
+  "status": "success",
+  "meta": {
+    "apiVersion": "5.3.0",
+    "layer": "incident_intelligence",
+    "count": 150,
+    "total": 1650
+  },
+  "data": [
+    {
+      "ponto": "ABRIGOS",
+      "filial": "FILIAL LESTE",
+      "bairro": "TATUAPE",
+      "ocorrencia": "VIDRO  RISCADO",
+      "total": 3,
+      "percentual": 0.0018
+    }
+  ]
+}
+```
+
+**Top-N Mode** (`?layer=incident_intelligence&topN=5`): Returns only incidents from the top 5 most frequent occurrence types.
+
+### Service Level Response (layer=service_level) NEW v5.3
+
+```json
+{
+  "status": "success",
+  "meta": {
+    "apiVersion": "5.3.0",
+    "layer": "service_level",
+    "count": 60,
+    "total": 60
+  },
+  "backlog": {
+    "totalPending": 5,
+    "avgDaysOpen": 12.5,
+    "byOrigem": {
+      "SAC": 3,
+      "COP": 2
+    }
+  },
+  "data": [
+    {
+      "filial": "SUL",
+      "data": "03/12/2024",
+      "semana": "49",
+      "origem": "SAC",
+      "codEletro": "T19600",
+      "primaryKey": "220013852",
+      "equipamento": "TOTEM",
+      "ocorrencia": "ABALROADO",
+      "status": "CONCLUIDO",
+      "diasEmAberto": 0,
+      "sla": "",
+      "equipResumo": "TOTEM"
     }
   ]
 }
@@ -479,9 +635,80 @@ curl "BASE_URL?lat=-23.55&lon=-46.68&radius=2"
 
 **About Abrigo Amigo:** Award-winning social initiative by Eletromidia and AlmapBBDO designed to protect women at night. From 8:00 PM to 5:00 AM, digital advertising displays at 264 bus stops in São Paulo transform into interactive safety hubs with cameras, microphones, and real-time video calls.
 
+### Maintenance Performance Fields (layer=maintenance_performance) NEW v5.3
+
+| Field              | Type   | Description                                      |
+| ------------------ | ------ | ------------------------------------------------ |
+| `filial`           | string | Branch (FILIAL LESTE, FILIAL SUL, MATRIZ)        |
+| `semana`           | string | Week identifier (01º SEMANA, 02º SEMANA, etc.)   |
+| `previsto`         | number | Planned maintenance count for the week           |
+| `concluido`        | number | Completed maintenance count                      |
+| `pendente`         | number | Pending/incomplete maintenance count             |
+| `semanaConcluido`  | number | Completions executed in this week                |
+| `percentRealizados`| number | Completion rate as decimal (0.23 = 23%)          |
+| `periodo`          | string | Bi-annual period (1BI = Jan-Jun, 2BI = Jul-Dec)  |
+
+**Aggregated Mode Fields** (when `agregado=true`):
+
+| Field                | Type   | Description                                |
+| -------------------- | ------ | ------------------------------------------ |
+| `totalPrevisto`      | number | Sum of planned maintenance for period      |
+| `totalConcluido`     | number | Sum of completed maintenance               |
+| `totalPendente`      | number | Sum of pending maintenance                 |
+| `avgPercentRealizados`| number | Average completion rate across weeks      |
+| `semanaCount`        | number | Number of weeks in the period              |
+
+### Incident Intelligence Fields (layer=incident_intelligence) NEW v5.3
+
+| Field       | Type   | Description                                    |
+| ----------- | ------ | ---------------------------------------------- |
+| `ponto`     | string | Point type (ABRIGOS)                           |
+| `filial`    | string | Branch                                         |
+| `bairro`    | string | Neighborhood (normalized/trimmed for grouping) |
+| `ocorrencia`| string | Occurrence/issue type                          |
+| `total`     | number | Count of this occurrence type                  |
+| `percentual`| number | Percentage of total as decimal                 |
+
+### Service Level Fields (layer=service_level) NEW v5.3
+
+| Field           | Type   | Description                                  |
+| --------------- | ------ | -------------------------------------------- |
+| `filial`        | string | Branch                                       |
+| `data`          | string | Ticket creation date                         |
+| `semana`        | string | Week number                                  |
+| `origem`        | string | Source channel (SAC, COP, LIDIA)             |
+| `codEletro`     | string | Equipment code (joinable to main layer)      |
+| `primaryKey`    | string | Primary key from source system               |
+| `codigoSptrans` | string | SPTrans code                                 |
+| `equipamento`   | string | Equipment type                               |
+| `ocorrencia`    | string | Issue/occurrence type                        |
+| `status`        | string | Ticket status (CONCLUIDO or pending)         |
+| `diasEmAberto`  | number | Days the ticket has been open                |
+| `sla`           | string | SLA information                              |
+| `equipResumo`   | string | Equipment summary category (ABRIGO, TOTEM)   |
+
+**Backlog Metrics** (included in response):
+
+| Field                 | Type   | Description                           |
+| --------------------- | ------ | ------------------------------------- |
+| `backlog.totalPending`| number | Total count of non-completed tickets  |
+| `backlog.avgDaysOpen` | number | Average days open for pending tickets |
+| `backlog.byOrigem`    | object | Pending ticket count by source        |
+
 ---
 
 ## Changelog
+
+### v5.3.0 (2025-12-28)
+
+- Added **Operational Dashboard layers** for React + TypeScript dashboard integration
+- New `layer=maintenance_performance` for weekly preventive maintenance tracking
+- New `layer=incident_intelligence` for geographic/category issue analysis with Top-N filtering
+- New `layer=service_level` for SLA and service ticket tracking with backlog metrics
+- New filters: `semana`, `periodo`, `topN`, `ocorrencia`, `origem`, `statusTicket`, `codEletro`, `agregado`
+- Aggregation mode support for `maintenance_performance` layer
+- 30-minute caching for operational data (vs 5-10 minutes for asset data)
+- Backlog metrics automatically calculated in service_level response
 
 ### v5.2.0 (2025-12-23)
 
